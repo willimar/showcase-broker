@@ -22,8 +22,8 @@ namespace Showcase.Broker.Application.Handlers.Authenticate
 
         public AuthenticateHandler(
             IMediator mediator,
-            ILogger logger,
-            IUser user,
+            ILogger<AuthenticateHandler> logger,
+            IUser? user,
             AppSettings appSettings,
             IHttpContextAccessor httpContextAccessor,
             IMapperProfile<AuthenticateCommand, LoginDto> loginMapper)
@@ -44,9 +44,9 @@ namespace Showcase.Broker.Application.Handlers.Authenticate
             var loginDto = this._loginMapper.Map(request);
             var headers = this.GetAnonymousHeaders();
 
-            await navigator.Post(loginDto, headers, cancellationToken);
+            var response = await navigator.Post(loginDto, headers, cancellationToken);
 
-            throw new NotImplementedException();
+            return await this.ResponseTo(response);
         }
 
         public Task<IResponse> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)

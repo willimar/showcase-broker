@@ -20,7 +20,7 @@ namespace Showcase.Broker.Controllers
         public async ValueTask<IActionResult> Authenticate([FromBody] AuthenticateCommand authenticate)
         {
             var response = await this._mediator.Send(authenticate);
-            return await ValueTask.FromResult(Ok(response));
+            return await this.ResponseFrom(response);
         }
 
         
@@ -29,7 +29,7 @@ namespace Showcase.Broker.Controllers
         public async ValueTask<IActionResult> RefreshToken([FromBody] RefreshTokenCommand refreshToken)
         {
             var response = await this._mediator.Send(refreshToken);
-            return await ValueTask.FromResult(Ok(response));
+            return await this.ResponseFrom(response);
         }
     }
 }

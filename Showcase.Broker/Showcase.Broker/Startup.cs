@@ -1,9 +1,14 @@
+using DataCore.Domain.Interfaces;
+using DataCore.Mapper;
 using MediatR;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
+using Showcase.Broker.Application;
 using Showcase.Broker.Application.Commands.Authenticate;
 using Showcase.Broker.Application.Handlers.Authenticate;
 using Showcase.Broker.Application.Interfaces;
+using Showcase.Broker.Application.Mappers.Authenticate;
+using Showcase.Broker.Navigator.Dtos.Authenticate;
 using Swagger.Simplify;
 using System.Globalization;
 using System.Reflection;
@@ -32,7 +37,19 @@ namespace Showcase.Broker
             services.GenerateToVersion(apiInfo);
             services.PrepareAnyCors();
             services.AddMediatR(typeof(Startup));
+
+            services.AddSingleton<AppSettings>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddScoped<IUser, UserModel>();
+
+            services.AddScoped<IMapperProfile<AuthenticateCommand, LoginDto>, LoginMapper>();
+
             services.AddScoped<IRequestHandler<AuthenticateCommand, IResponse>, AuthenticateHandler>();
+            services.AddScoped<IRequestHandler<RefreshTokenCommand, IResponse>, AuthenticateHandler>();
+            services.AddScoped<IRequestHandler<AppendAccountCommand, IResponse>, AuthenticateHandler>();
+            services.AddScoped<IRequestHandler<AppendUserCommand, IResponse>, AuthenticateHandler>();
+            services.AddScoped<IRequestHandler<ChangePasswordCommand, IResponse>, AuthenticateHandler>();
         }
 
         private static (AssemblyDescriptionAttribute? descriptionAttribute, AssemblyProductAttribute? productAttribute, AssemblyCopyrightAttribute? copyrightAttribute, AssemblyName assemblyName) GetAssemblyInfo()
